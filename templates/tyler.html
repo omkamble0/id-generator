@@ -1,0 +1,255 @@
+<!-- ========================================== -->
+<!-- 1. THE CUSTOM FORM FOR TYLER               -->
+<!-- ========================================== -->
+<div class="template-specific-form">
+    
+    <!-- 6 Album Era Color Swatches -->
+    <div class="input-group" style="margin-bottom: 20px;">
+        <label>Card Color Variant (Album Eras)</label>
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+            <div onclick="changeTylerColor('#EFA2A2')" style="width: 30px; height: 30px; background: #EFA2A2; border-radius: 50%; border: 2px solid #000; cursor: pointer;" title="Bastard (Weathered Pink)"></div>
+            <div onclick="changeTylerColor('#C8BBD8')" style="width: 30px; height: 30px; background: #C8BBD8; border-radius: 50%; border: 2px solid #000; cursor: pointer;" title="Goblin (Faded Lavender)"></div>
+            <div onclick="changeTylerColor('#BFDCB0')" style="width: 30px; height: 30px; background: #BFDCB0; border-radius: 50%; border: 2px solid #000; cursor: pointer;" title="Wolf (Sun-faded Mint)"></div>
+            <div onclick="changeTylerColor('#B1DCED')" style="width: 30px; height: 30px; background: #B1DCED; border-radius: 50%; border: 2px solid #000; cursor: pointer;" title="Cherry Bomb (Chalky Sky Blue)"></div>
+            <div onclick="changeTylerColor('#F4CD9D')" style="width: 30px; height: 30px; background: #F4CD9D; border-radius: 50%; border: 2px solid #000; cursor: pointer;" title="Flower Boy (Aged Manila)"></div>
+            <div onclick="changeTylerColor('#EABCC3')" style="width: 30px; height: 30px; background: #EABCC3; border-radius: 50%; border: 2px solid #000; cursor: pointer;" title="IGOR (Distressed Rose Pink)"></div>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Issued To (Name)</label>
+        <input type="text" data-sync="t-name" value="Tyler Baudelaire">
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Date of Birth</label><input type="text" data-sync="t-dob" value="03/06/91"></div>
+        <div class="input-group"><label>Date of Issue</label><input type="text" data-sync="t-issue" value="06/25/2021"></div>
+    </div>
+    
+    <div class="input-group">
+        <label>Place of Issue</label>
+        <input type="text" data-sync="t-place" value="Hawthorne, CA">
+    </div>
+    
+    <div class="input-group" style="margin-top:20px;">
+        <label>Upload Passport Photo</label>
+        <input type="file" id="dynamic-photo-upload" accept="image/*">
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. THE ID CARD ART FOR TYLER (FRONT & BACK) -->
+<!-- ========================================== -->
+<div class="template-specific-card">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Arial+Black&display=swap');
+        
+        .card-scene { width: 600px; height: 380px; perspective: 1000px; }
+        .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 12px; }
+        .card-back { transform: rotateY(180deg); }
+        
+        .tyler-card {
+            width: 100%; height: 100%;
+            background-color: #BFDCB0; /* Default Wolf Mint */
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: inset 0 0 0 12px #f4f0ea;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #d4d4d4;
+            transition: background-color 0.3s ease;
+        }
+
+        .tyler-star-wrapper {
+            position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border-radius: 8px; border: 1.5px solid #222;
+            padding: 15px; display: flex; z-index: 10;
+        }
+        
+        .stars-top { position: absolute; top: -11px; left: 0; width: 100%; text-align: center; font-size: 16px; letter-spacing: 12px; color: #222; white-space: nowrap; overflow: hidden; }
+        .stars-bottom { position: absolute; bottom: -11px; left: 0; width: 100%; text-align: center; font-size: 16px; letter-spacing: 12px; color: #222; white-space: nowrap; overflow: hidden; }
+        .stars-left { position: absolute; top: 0; left: -10px; height: 100%; font-size: 16px; color: #222; writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 10px; overflow: hidden; display: flex; align-items: center;}
+        .stars-right { position: absolute; top: 0; right: -10px; height: 100%; font-size: 16px; color: #222; writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 10px; overflow: hidden; display: flex; align-items: center;}
+
+        .tyler-photo-col { width: 38%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-right: 15px; }
+        .tyler-photo { width: 95%; height: 240px; object-fit: cover; border: 1px solid #999; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-bottom: 5px; background: #e5e5e5; filter: contrast(110%) sepia(10%); }
+        .tyler-photo-caption { font-family: 'Courier Prime', monospace; font-size: 9px; font-weight: bold; color: #333; text-align: center;}
+
+        .tyler-data-col { flex: 1; font-family: 'Courier Prime', monospace; color: #111; position: relative; display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .tyler-header { text-align: center; margin-bottom: 10px; }
+        .tyler-header h4 { font-size: 12px; font-weight: 700; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;}
+        .tyler-header h3 { font-size: 18px; font-weight: 900; margin: 0; letter-spacing: 0.5px;}
+
+        .tyler-row { display: flex; align-items: flex-end; margin-bottom: 8px; font-size: 14px; font-weight: 700;}
+        .tyler-label { white-space: nowrap; margin-right: 5px; }
+        
+        .tyler-value {
+            flex: 1; border-bottom: 2.5px dotted #333; 
+            font-family: 'Caveat', cursive; font-size: 26px; 
+            color: #111; line-height: 0.8; padding-left: 10px; 
+            text-align: center; white-space: nowrap; overflow: hidden;
+        }
+
+        .vintage-ink-text {
+            mix-blend-mode: multiply;
+            opacity: 0.85;
+            text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.4);
+            color: #1a1a1a;
+        }
+
+        .tyler-disclaimer { font-size: 10.5px; text-align: center; font-weight: 700; line-height: 1.25; margin-top: 5px; position: relative; z-index: 2;}
+        
+        /* THE FRONT STAMP: Solid text fill (no hollow stroke), 35% opacity */
+        .tyler-stamp {
+            position: absolute; top: 160px; left: -10px; width: 110%;
+            font-family: 'Arial Black', sans-serif; font-weight: 900; font-size: 32px; 
+            color: #3A5E78; /* Solid color */
+            text-transform: uppercase; transform: rotate(-8deg); 
+            letter-spacing: 1px; line-height: 1; text-align: center; 
+            z-index: 1; border: 4px solid #3A5E78; /* Single solid border */
+            border-radius: 12px; padding: 4px; pointer-events: none; 
+            mix-blend-mode: multiply; opacity: 0.35; transition: border-color 0.3s, color 0.3s;
+        }
+
+        .tyler-signature-area { display: flex; flex-direction: column; align-items: flex-end; margin-top: 5px;}
+        .tyler-signature { font-family: 'Caveat', cursive; font-size: 42px; border-bottom: 2.5px dotted #333; display: inline-block; width: 85%; text-align: center; line-height: 0.65; color: #111;}
+        .tyler-sig-label { font-size: 9px; font-weight: bold; width: 85%; text-align: center; margin-top: 2px;}
+
+        /* BACK SIDE STYLING (Clean Global Travel Admin Design) */
+        .tyler-back-content {
+            height: 100%; display: flex; flex-direction: column;
+            font-family: 'Courier Prime', monospace; color: #222; padding: 15px 25px;
+        }
+        .back-barcode {
+            width: 100%; height: 60px;
+            background: repeating-linear-gradient(90deg, #111, #111 2px, transparent 2px, transparent 5px);
+            margin-top: 15px; opacity: 0.85; mix-blend-mode: multiply;
+        }
+    </style>
+
+    <div class="card-scene">
+        <div class="card-inner" id="card-inner">
+            
+            <!-- FRONT OF CARD -->
+            <div class="card-face card-front">
+                <div class="tyler-card" id="tyler-front-bg">
+                    <div class="tyler-star-wrapper">
+                        <div class="stars-top">★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★</div>
+                        <div class="stars-bottom">★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★</div>
+                        <div class="stars-left">★★★★★★★★★★</div>
+                        <div class="stars-right">★★★★★★★★★★</div>
+                        
+                        <div class="tyler-photo-col">
+                            <img class="tyler-photo sync-photo" src="https://via.placeholder.com/200x240/f4f0ea/cccccc?text=Photo" alt="">
+                            <div class="tyler-photo-caption">Photograph of Authorized traveler</div>
+                        </div>
+                        
+                        <div class="tyler-data-col">
+                            <div class="tyler-header">
+                                <h4>Permanent License of Travel</h4>
+                                <h3>NO. TTC6252021</h3>
+                            </div>
+                            
+                            <div style="z-index: 5;">
+                                <div class="tyler-row">
+                                    <div class="tyler-label">Issued to........</div>
+                                    <div class="tyler-value vintage-ink-text sync-t-name format-title">Tyler Baudelaire</div>
+                                </div>
+                                <div class="tyler-row">
+                                    <div class="tyler-label">Date of birth ...</div>
+                                    <div class="tyler-value vintage-ink-text sync-t-dob">03/06/91</div>
+                                </div>
+                                <div class="tyler-row">
+                                    <div class="tyler-label">Place of issue ..</div>
+                                    <div class="tyler-value vintage-ink-text sync-t-place format-title">Hawthorne, CA</div>
+                                </div>
+                                <div class="tyler-row">
+                                    <div class="tyler-label">Date of issue ...</div>
+                                    <div class="tyler-value vintage-ink-text sync-t-issue">06/25/2021</div>
+                                </div>
+                            </div>
+                            
+                            <div class="tyler-stamp" id="front-cmiygl-stamp">Call me if<br>you get lost</div>
+                            
+                            <div class="tyler-disclaimer">
+                                LICENSE OF TRAVEL<br>
+                                This is to Certify that the person named and described above is permitted to travel and explore freely unless detained by law.<br><br>
+                                IMPORTANT<br>
+                                The holder of this license wrote, composed, and arranged all songs within the attached record.
+                            </div>
+                            
+                            <div class="tyler-signature-area">
+                                <div class="tyler-signature vintage-ink-text sync-t-name format-title">Tyler Baudelaire</div>
+                                <div class="tyler-sig-label">Signature of Authorized traveler</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BACK OF CARD (CLEAN DESIGN) -->
+            <div class="card-face card-back">
+                <div class="tyler-card" id="tyler-back-bg">
+                    <div class="tyler-star-wrapper">
+                        <div class="stars-top">★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★</div>
+                        <div class="stars-bottom">★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★</div>
+                        <div class="stars-left">★★★★★★★★★★</div>
+                        <div class="stars-right">★★★★★★★★★★</div>
+                        
+                        <div class="tyler-back-content">
+                            <div style="font-weight: bold; font-size: 13px; letter-spacing: 1px; position: relative; z-index: 10; margin-top: 10px;">
+                                UNITED STATES OF AMERICA // TRAVEL CREDENTIAL
+                            </div>
+                            
+                            <div style="font-size: 11.5px; line-height: 1.5; font-weight: 600; position: relative; z-index: 10; margin-top: 30px;">
+                                <p>1. This card is property of the Global Travel Administration and must be surrendered upon request.</p>
+                                <p style="margin-top: 15px;">2. Unauthorized replication, tampering, or use outside designated destination checkpoints (Estate Sale, Camp Flog Gnaw) is strictly prohibited.</p>
+                            </div>
+                            
+                            <div style="position: relative; z-index: 10; margin-top: auto;">
+                                <div style="font-size: 10px; font-weight: bold;">SECURITY VERIFICATION HASH</div>
+                                <div class="back-barcode"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    window.changeTylerColor = function(hex) {
+        const colorHex = hex.toUpperCase();
+        
+        // Exact mappings for the Front Stamp
+        const stampColors = {
+            '#EFA2A2': '#4A1515', // Bastard
+            '#C8BBD8': '#2A1B3D', // Goblin
+            '#BFDCB0': '#1B3B2B', // Wolf
+            '#B1DCED': '#A82C35', // Cherry Bomb
+            '#F4CD9D': '#3A5E78', // Flower Boy
+            '#EABCC3': '#334139'  // IGOR
+        };
+
+        const stampInk = stampColors[colorHex] || '#3A5E78'; 
+
+        // Update Backgrounds
+        const frontBg = document.getElementById('tyler-front-bg');
+        const backBg = document.getElementById('tyler-back-bg');
+        
+        if (frontBg) frontBg.style.backgroundColor = colorHex;
+        if (backBg) backBg.style.backgroundColor = colorHex;
+
+        // Update the Front Stamp Colors (Solid)
+        const frontStamp = document.getElementById('front-cmiygl-stamp');
+        if (frontStamp) {
+            frontStamp.style.borderColor = stampInk;
+            frontStamp.style.color = stampInk;
+        }
+    }
+</script>

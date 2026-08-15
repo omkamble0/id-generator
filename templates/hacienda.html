@@ -1,0 +1,217 @@
+<!-- ========================================== -->
+<!-- 1. THE CUSTOM FORM FOR FAC51 HACIENDA      -->
+<!-- ========================================== -->
+<div class="template-specific-form">
+    
+    <div class="input-group" style="margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #ccc;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; font-weight: 600;">
+            <input type="checkbox" id="toggle-scribbles" checked onchange="toggleGraffiti()" style="width: 18px; height: 18px;">
+            Enable Vintage Marker Signatures
+        </label>
+    </div>
+
+    <div class="input-group">
+        <label>Member Name</label>
+        <input type="text" data-sync="hac-name" value="N. D. Spence">
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group">
+            <label>Member No.</label>
+            <input type="text" data-sync="hac-no" value="921/82">
+        </div>
+        <div class="input-group">
+            <label>Exp Date</label>
+            <input type="text" data-sync="hac-exp" value="OCT 82">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Signature (Handwritten)</label>
+        <input type="text" data-sync="hac-sig" value="N.D. Spence">
+    </div>
+    
+    <div class="input-group" style="margin-top:20px;">
+        <label>Upload Vintage Photo</label>
+        <input type="file" id="dynamic-photo-upload" accept="image/*">
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. THE ID CARD ART FOR FAC51 HACIENDA      -->
+<!-- ========================================== -->
+<div class="template-specific-card">
+    <style>
+        /* Grungy Typewriter & Bleeding Marker Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Special+Elite&family=Rock+Salt&display=swap');
+        
+        /* Master Layout constraints to fix the size */
+        .card-scene { width: 600px; height: 380px; perspective: 1000px; }
+        .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 20px; overflow: hidden; border: 1px solid rgba(0,0,0,0.4); }
+        .card-back { transform: rotateY(180deg); }
+        
+        #hacienda-wrapper { width: 100%; height: 100%; }
+
+        /* --- FRONT OF CARD --- */
+        .hac-front {
+            width: 100%; height: 100%; 
+            background: repeating-linear-gradient(-45deg, #F2D053, #F2D053 40px, #E75A43 40px, #E75A43 80px);
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+
+        /* Edge burn/grunge effect */
+        .hac-front::after, .hac-back::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.6); pointer-events: none; z-index: 60;
+        }
+
+        .hac-logo-box {
+            background-color: #E8D99B; border: 2px solid #111; padding: 15px 45px;
+            text-align: center; position: relative; z-index: 20; box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+        }
+        .hac-logo-top { font-family: 'Arial Black', Impact, sans-serif; font-size: 70px; letter-spacing: 4px; color: #111; line-height: 1; margin-bottom: 5px; }
+        .hac-logo-sub { font-family: 'Arial', sans-serif; font-weight: bold; font-size: 16px; letter-spacing: 6px; color: #111; text-transform: uppercase; }
+
+        /* --- BACK OF CARD --- */
+        .hac-back {
+            width: 100%; height: 100%; 
+            background-color: #E8D99B; 
+            /* EXACT 40px GRID: Lines draw at 38-40px */
+            background-image: repeating-linear-gradient(to bottom, transparent, transparent 38px, rgba(40,60,120,0.5) 38px, rgba(40,60,120,0.5) 40px);
+            position: relative; overflow: hidden;
+        }
+
+        .hac-photo-box {
+            position: absolute; left: 20px; top: 40px; width: 160px; height: 215px;
+            background: #fff; padding: 6px 6px 20px 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            transform: rotate(-3deg); z-index: 10;
+        }
+        .hac-photo-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(120%) sepia(30%); }
+
+        /* --- THE GRID-LOCKED DATA ROWS --- */
+        .hac-row {
+            position: absolute; left: 210px; width: 370px; height: 40px;
+            display: flex; align-items: flex-end; /* Forces text to sit at the bottom of the 40px block */
+            padding-bottom: 2px; /* Nudges text perfectly onto the visual line */
+            z-index: 15;
+        }
+        
+        /* Locking rows to exact multiples of 40 to match the background gradient */
+        .row-1 { top: 40px; }
+        .row-2 { top: 120px; }
+        .row-3 { top: 200px; }
+        .row-4 { top: 320px; } /* Skipped rows to create the visual spread */
+
+        /* Vintage Stamped Labels */
+        .lbl { font-family: 'Special Elite', monospace; font-size: 19px; font-weight: bold; color: #111; margin-right: 15px; margin-bottom: 2px; }
+        
+        /* Raw, Bleeding Marker Inputs */
+        .val { font-family: 'Permanent Marker', cursive; font-size: 32px; color: #1b2845; line-height: 0.8; mix-blend-mode: multiply; }
+        
+        .row-4 .val { font-size: 36px; } /* Exp date is usually written bigger */
+
+        /* --- MARKER GRAFFITI LAYER --- */
+        .graf-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50; pointer-events: none; mix-blend-mode: multiply;
+            transition: opacity 0.3s ease; opacity: 0.85;
+        }
+        .graf-tag { position: absolute; font-family: 'Permanent Marker', cursive; line-height: 1; }
+        .graf-heavy { font-family: 'Rock Salt', cursive; }
+
+    </style>
+
+    <div class="card-scene" id="hacienda-wrapper">
+        <div class="card-inner" id="card-inner">
+            
+            <!-- ================= FRONT OF CARD ================= -->
+            <div class="card-face card-front">
+                <div class="hac-front">
+                    
+                    <!-- Graffiti Layer (Front) -->
+                    <div class="graf-layer" id="graf-front">
+                        <div class="graf-tag" style="top: 15px; left: 160px; transform: rotate(-15deg); font-size: 40px; color: #111;">Peter Brown</div>
+                        <div class="graf-tag" style="top: 60px; right: 30px; transform: rotate(-5deg); font-size: 55px; color: #511822;">Mani</div>
+                        <div class="graf-tag" style="bottom: 20px; left: 180px; transform: rotate(5deg); font-size: 35px; color: #111;">Kevin L.</div>
+                        <div class="graf-tag graf-heavy" style="top: 100px; left: -10px; transform: rotate(-75deg); font-size: 25px; color: #111; opacity: 0.7;">Ben Kelly</div>
+                    </div>
+
+                    <div class="hac-logo-box">
+                        <div class="hac-logo-top">FAC51</div>
+                        <div class="hac-logo-sub">The Hacienda</div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- ================= BACK OF CARD ================= -->
+            <div class="card-face card-back">
+                <div class="hac-back">
+                    
+                    <!-- Graffiti Layer (Back) -->
+                    <div class="graf-layer" id="graf-back">
+                        <div class="graf-tag" style="left: 200px; top: 8px; font-size: 30px; color: #111; transform: rotate(-4deg);">Gellion x</div>
+                        <div class="graf-tag" style="left: 420px; top: 15px; font-size: 42px; color: #111; transform: rotate(-8deg); opacity: 0.8;">Spence</div>
+                        <div class="graf-tag" style="left: 5px; top: 40px; font-size: 55px; color: #1b2845; transform: rotate(-70deg); opacity: 0.9;">Mike</div>
+                        <div class="graf-tag graf-heavy" style="left: 170px; top: 110px; font-size: 65px; color: #1b2845; transform: rotate(-15deg); opacity: 0.6;">Amry</div>
+                        <div class="graf-tag graf-heavy" style="right: 25px; bottom: 5px; font-size: 28px; color: #111; transform: rotate(-4deg);">JOHN ROBB</div>
+                    </div>
+
+                    <div class="hac-photo-box">
+                        <img class="sync-photo" src="https://via.placeholder.com/160x215/cccccc/444444?text=Photo" alt="">
+                    </div>
+                    
+                    <!-- GRID LOCKED ROWS (Label + Value linked together) -->
+                    <div class="hac-row row-1">
+                        <span class="lbl">N.</span>
+                        <span class="val sync-hac-name">N. D. Spence</span>
+                    </div>
+
+                    <div class="hac-row row-2">
+                        <span class="lbl">No.</span>
+                        <span class="val sync-hac-no">921/82</span>
+                    </div>
+
+                    <div class="hac-row row-3">
+                        <span class="lbl">Sig.</span>
+                        <span class="val sync-hac-sig">N.D. Spence</span>
+                    </div>
+
+                    <div class="hac-row row-4">
+                        <span class="lbl">Exp date.</span>
+                        <span class="val sync-hac-exp">OCT 82</span>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. TEMPLATE-SPECIFIC SCRIPT                -->
+<!-- ========================================== -->
+<script>
+    // Live data binding
+    const inputs = document.querySelectorAll('input[data-sync], select[data-sync]');
+    inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const syncClass = `sync-${e.target.getAttribute('data-sync')}`;
+            const targets = document.querySelectorAll(`.${syncClass}`);
+            targets.forEach(target => { target.innerText = e.target.value; });
+        });
+    });
+
+    // Toggle Graffiti Layer
+    function toggleGraffiti() {
+        const isChecked = document.getElementById('toggle-scribbles').checked;
+        const grafFront = document.getElementById('graf-front');
+        const grafBack = document.getElementById('graf-back');
+        
+        if (grafFront) grafFront.style.opacity = isChecked ? '0.85' : '0';
+        if (grafBack) grafBack.style.opacity = isChecked ? '0.85' : '0';
+    }
+</script>

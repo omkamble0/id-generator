@@ -1,0 +1,316 @@
+<!-- ========================================== -->
+<!-- 1. THE CUSTOM FORM FOR PETER GRIFFIN       -->
+<!-- ========================================== -->
+<div class="template-specific-form">
+    
+    <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" data-sync="p-name" value="PETER GRIFFIN">
+    </div>
+    
+    <div class="input-group">
+        <label>Address Line 1</label>
+        <input type="text" data-sync="p-addr1" value="31 SPOONER STREET">
+    </div>
+    
+    <div class="input-group">
+        <label>City, State, Zip</label>
+        <input type="text" data-sync="p-addr2" value="QUAHOG, RI 00093">
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>License No.</label><input type="text" data-sync="p-lic" value="1MORBEER"></div>
+        <div class="input-group"><label>Class</label><input type="text" data-sync="p-class" value="DRUNK"></div>
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Birthdate</label><input type="text" data-sync="p-dob" value="1964"></div>
+        <div class="input-group"><label>Expires</label><input type="text" data-sync="p-exp" value="Never"></div>
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Sex</label><input type="text" data-sync="p-sex" value="M"></div>
+        <div class="input-group"><label>Size</label><input type="text" data-sync="p-size" value="FAT"></div>
+        <div class="input-group"><label>Wt.</label><input type="text" data-sync="p-wt" value="330lbs"></div>
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Eyes</label><input type="text" data-sync="p-eyes" value="ROUND"></div>
+        <div class="input-group"><label>Issue Date</label><input type="text" data-sync="p-issue" value="01/31/1999"></div>
+    </div>
+    
+    <div class="input-group">
+        <label>Restrictions</label>
+        <input type="text" data-sync="p-restr" value="Ernie the Giant Chicken">
+    </div>
+    
+    <div class="input-group" style="margin-top:20px;">
+        <label>Upload Photo</label>
+        <input type="file" id="dynamic-photo-upload" accept="image/*">
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. THE ID CARD ART FOR PETER GRIFFIN       -->
+<!-- ========================================== -->
+<div class="template-specific-card">
+    <style>
+        /* Typography Imports: Caveat for Signature, Chewy for "Rhode Island", Roboto Condensed for Heavy Text */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Chewy&family=Roboto+Condensed:wght@700;900&display=swap');
+        
+        .card-scene { width: 600px; height: 380px; perspective: 1000px; }
+        .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 6px; overflow: hidden; border: 1px solid #a8b0c8;}
+        .card-back { transform: rotateY(180deg); }
+        
+        /* --- FRONT SIDE STYLES --- */
+        .peter-card {
+            width: 100%; height: 100%; 
+            background-color: #cfd4eb; /* Light periwinkle paper color */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            display: flex; padding: 25px 25px 20px 25px; box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #000;
+        }
+
+        .peter-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-right: 15px;
+        }
+
+        .peter-right {
+            width: 210px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        /* Top Header */
+        .ri-title {
+            font-family: 'Chewy', cursive;
+            font-size: 40px;
+            color: #08248c; /* Rhode Island Navy Blue */
+            line-height: 1;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        /* The Main Blue Block */
+        .blue-data-block {
+            background-color: #08248c;
+            color: #fff;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+
+        .blue-data-title {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: -0.5px;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .blue-data-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            line-height: 1.2;
+        }
+
+        .blue-data-row span { font-weight: normal; }
+        .blue-data-row strong { font-weight: bold; font-family: 'Roboto Condensed', sans-serif; font-size: 17px;}
+
+        /* Stats Row */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-right: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        .stat-item span { color: #08248c; margin-bottom: 2px; }
+        .stat-item strong { font-family: 'Roboto Condensed', sans-serif; font-size: 18px; font-weight: 700; color: #111; }
+
+        /* Restrictions */
+        .restrictions-line {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .restrictions-line span { color: #08248c; margin-right: 4px; }
+        .restrictions-line strong { font-weight: bold; font-family: 'Roboto Condensed', sans-serif; font-size: 18px;}
+
+        /* Address Block */
+        .address-block {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 900;
+            color: #111;
+            line-height: 1.05;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            z-index: 2;
+        }
+
+        .address-name { font-size: 28px; text-transform: uppercase; letter-spacing: -0.5px;}
+        .address-line { font-size: 22px; text-transform: uppercase; letter-spacing: -0.5px;}
+
+        /* Signature */
+        .peter-signature {
+            font-family: 'Caveat', cursive;
+            font-size: 48px;
+            color: #111;
+            transform: rotate(-4deg);
+            margin-top: -15px;
+            margin-left: 20px;
+            line-height: 0.8;
+            z-index: 10;
+        }
+
+        /* Photo Column */
+        .peter-photo-box {
+            width: 210px;
+            height: 250px;
+            border: 2px solid #111;
+            background-color: #6376eb; /* Cartoon Blue Background */
+            overflow: hidden;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .peter-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        /* Bottom Right Graphics */
+        .bottom-graphics {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+
+        .ri-silhouette {
+            width: 45px;
+            height: 60px;
+            fill: #08248c;
+            margin-left: 10px;
+        }
+
+        .dl-letters {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 32px;
+            color: #08248c;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+
+        /* --- BACK SIDE --- */
+        .card-back {
+            background-color: #cfd4eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .mag-stripe {
+            width: 100%; height: 55px; background-color: #111; margin-top: 30px;
+        }
+        
+        .barcode-area {
+            width: 80%; height: 80px; 
+            background: repeating-linear-gradient(90deg, #111, #111 3px, transparent 3px, transparent 6px);
+            margin-top: 40px; opacity: 0.8;
+        }
+
+    </style>
+
+    <div class="card-scene">
+        <div class="card-inner" id="card-inner">
+            
+            <!-- FRONT OF CARD -->
+            <div class="card-face card-front">
+                <div class="peter-card">
+                    
+                    <div class="peter-left">
+                        <div class="ri-title">Rhode Island</div>
+                        
+                        <div class="blue-data-block">
+                            <div class="blue-data-title">DRIVERS LICENSE</div>
+                            <div class="blue-data-row" style="margin-bottom: 2px;">
+                                <span>Class <strong class="sync-p-class">DRUNK</strong></span>
+                                <span>License No. <strong class="sync-p-lic">1MORBEER</strong></span>
+                            </div>
+                            <div class="blue-data-row">
+                                <span>Birthdate <strong class="sync-p-dob">1964</strong></span>
+                                <span>Expires <strong class="sync-p-exp">Never</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-item"><span>Sex</span><strong class="sync-p-sex format-upper">M</strong></div>
+                            <div class="stat-item"><span>Size</span><strong class="sync-p-size format-upper">FAT</strong></div>
+                            <div class="stat-item"><span>Wt.</span><strong class="sync-p-wt">330lbs</strong></div>
+                            <div class="stat-item"><span>Eyes</span><strong class="sync-p-eyes format-upper">ROUND</strong></div>
+                            <div class="stat-item"><span>Issue Date</span><strong class="sync-p-issue">01/31/1999</strong></div>
+                        </div>
+
+                        <div class="restrictions-line">
+                            <span>Restrictions:</span><strong class="sync-p-restr">Ernie the Giant Chicken</strong>
+                        </div>
+
+                        <div class="address-block">
+                            <div class="address-name sync-p-name">PETER GRIFFIN</div>
+                            <div class="address-line sync-p-addr1">31 SPOONER STREET</div>
+                            <div class="address-line sync-p-addr2">QUAHOG, RI 00093</div>
+                        </div>
+
+                        <div class="peter-signature sync-p-name">Peter Griffin</div>
+                    </div>
+
+                    <div class="peter-right">
+                        <div class="peter-photo-box">
+                            <img class="peter-photo sync-photo" src="https://via.placeholder.com/210x250/6376eb/333?text=Photo" alt="">
+                        </div>
+                        
+                        <div class="bottom-graphics">
+                            <!-- SVG Silhouette of Rhode Island -->
+                            <svg class="ri-silhouette" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 20 5 L 85 5 L 85 45 L 80 50 L 95 65 L 90 95 L 85 100 L 90 125 L 85 130 L 75 125 L 70 135 L 55 120 L 45 125 L 45 110 L 30 115 L 25 130 L 15 130 L 20 115 L 15 95 L 25 80 L 15 75 Z"/>
+                            </svg>
+                            <div class="dl-letters">DL</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- BACK OF CARD -->
+            <div class="card-face card-back">
+                <div class="mag-stripe"></div>
+                <div style="font-family: Arial, sans-serif; font-size: 11px; padding: 20px; text-align: justify; color: #333;">
+                    This license is issued as a novelty replica. Surrender upon demand to the Department of Motor Vehicles. 
+                    Not valid for identification or operation of a motor vehicle.
+                </div>
+                <div class="barcode-area"></div>
+            </div>
+            
+        </div>
+    </div>
+</div>

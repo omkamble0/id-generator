@@ -1,0 +1,142 @@
+<!-- ========================================== -->
+<!-- 1. THE CUSTOM FORM FOR YOUR PAINT CARD     -->
+<!-- ========================================== -->
+<div class="template-specific-form">
+    
+    <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" data-sync="paint-name" value="Your Name">
+    </div>
+    
+    <div class="input-group" style="margin-top:20px;">
+        <label>Upload Photo</label>
+        <input type="file" id="dynamic-photo-upload" accept="image/*">
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- 2. THE ID CARD ART                         -->
+<!-- ========================================== -->
+<div class="template-specific-card">
+    <style>
+        @font-face {
+            font-family: 'LazyDog';
+            src: url('lazydog.ttf') format('truetype'); 
+        }
+        
+        .card-scene { width: 600px; height: 380px; perspective: 1000px; }
+        .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+        .card-back { transform: rotateY(180deg); }
+        
+        .paint-front {
+            width: 100%; height: 100%;
+            background-image: url('2_4.jpg'); 
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .paint-back {
+            width: 100%; height: 100%;
+            background-image: url('1_2.jpg'); 
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* --- PHOTO SETTINGS --- */
+        
+        .live-photo-box {
+            position: absolute;
+            
+            /* Tweak these 4 numbers to fit your square perfectly! */
+            top: 100px;    /* UP/DOWN */
+            left: 50px;   /* LEFT/RIGHT */
+            width: 140px; /* WIDTH */
+            height: 150px;/* HEIGHT */
+            
+            background: transparent;
+            z-index: 10;
+        }
+        
+        .live-photo-box img {
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        /* --- TEXT SETTINGS --- */
+        .live-name-box {
+            position: absolute;
+            
+            /* Tweak these to move the text */
+            top: 250px;  /* UP/DOWN */
+            left: 38px;  /* LEFT/RIGHT */
+            
+            width: 250px; 
+            height: 40px;
+            
+            background-color: transparent; 
+            color: #a13955; 
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6);
+            
+            font-family: 'LazyDog', cursive;
+            
+            /* Tweak this to make the text bigger or smaller */
+            font-size: 30px; 
+            
+            letter-spacing: 1px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start; 
+            text-align: left;
+            z-index: 10;
+        }
+    </style>
+
+    <div class="card-scene">
+        <div class="card-inner" id="card-inner">
+            <div class="card-face card-front">
+                <div class="paint-front">
+                    <div class="live-photo-box">
+                        <img class="sync-photo" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Photo">
+                    </div>
+                    <div class="live-name-box sync-paint-name">Your Name</div>
+                </div>
+            </div>
+            <div class="card-face card-back">
+                <div class="paint-back"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const textInputs = document.querySelectorAll('input[data-sync]');
+    textInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const syncClass = `sync-${e.target.getAttribute('data-sync')}`;
+            document.querySelectorAll(`.${syncClass}`).forEach(target => { 
+                target.innerText = e.target.value; 
+            });
+        });
+    });
+
+    const photoUpload = document.getElementById('dynamic-photo-upload');
+    if(photoUpload) {
+        photoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.querySelectorAll('.sync-photo').forEach(img => {
+                        img.src = event.target.result;
+                    });
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>

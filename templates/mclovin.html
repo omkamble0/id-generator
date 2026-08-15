@@ -1,0 +1,169 @@
+<!-- ========================================== -->
+<!-- 1. THE CUSTOM FORM FOR MCLOVIN             -->
+<!-- ========================================== -->
+<div class="template-specific-form">
+    <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" data-sync="name" value="McLOVIN">
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Date of Birth</label><input type="text" data-sync="dob" value="06/03/1981"></div>
+        <div class="input-group"><label>Expiration</label><input type="text" data-sync="exp" value="06/03/2008"></div>
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Height (HT)</label><input type="text" data-sync="ht" value="5-8"></div>
+        <div class="input-group"><label>Weight (WT)</label><input type="text" data-sync="wt" value="70"></div>
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Hair</label><input type="text" data-sync="hair" value="BLACK"></div>
+        <div class="input-group"><label>Eyes</label><input type="text" data-sync="eyes" value="BRO"></div>
+    </div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>Sex</label><input type="text" data-sync="sex" value="M"></div>
+        <div class="input-group"><label>City (CTY)</label><input type="text" data-sync="cty" value="0"></div>
+    </div>
+
+    <!-- NEW ROW FOR FRONT DATA -->
+    <div class="input-row">
+        <div class="input-group"><label>Issue Date</label><input type="text" data-sync="issue" value="06/18/1998"></div>
+        <div class="input-group"><label>Class</label><input type="text" data-sync="class" value="3"></div>
+    </div>
+
+    <div class="input-row">
+        <div class="input-group"><label>Restr (Front)</label><input type="text" data-sync="restr-front" value=""></div>
+        <div class="input-group"><label>Endorse (Front)</label><input type="text" data-sync="endorse" value=""></div>
+    </div>
+    
+    <div style="margin-top:20px; margin-bottom:10px; font-size:0.75rem; font-weight:600; color:#111; text-transform: uppercase;">Back of Card Data</div>
+    
+    <div class="input-group"><label>Restrictions</label><input type="text" data-sync="restr-back" value="CORRECTIVE LENSES"></div>
+    <div class="input-group"><label>Organ Donor</label><input type="text" data-sync="donor" value="YES"></div>
+    
+    <div class="input-group" style="margin-top:20px;">
+        <label>Upload Headshot</label>
+        <input type="file" id="dynamic-photo-upload" accept="image/*">
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. THE ID CARD ART FOR MCLOVIN             -->
+<!-- ========================================== -->
+<div class="template-specific-card">
+    <style>
+        .card-scene { width: 600px; height: 380px; }
+        .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; background: #ffffff; color: #000; font-family: Arial, sans-serif; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #e5e5e5; }
+        .card-back { transform: rotateY(180deg); padding: 30px; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .id-front { display: flex; height: 100%; width: 100%; }
+        .id-left { width: 190px; background: #365594; display: flex; flex-direction: column; align-items: center; padding-top: 50px; z-index: 10; }
+        .user-photo { width: 140px; height: 180px; background: #cbd5e1; object-fit: cover; border: 2px solid #fff; }
+        .fake-barcode-front { width: 140px; height: 35px; margin-top: 10px; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px, #000 4px, #000 7px, #fff 7px, #fff 9px); }
+        .left-text { color: #fff; text-align: left; width: 140px; font-size: 13px; margin-top: 10px; line-height: 1.4; font-weight: bold; }
+        .id-right { flex: 1; position: relative; padding: 15px 20px; z-index: 10; }
+        
+        .hawaii-header { display: flex; align-items: center; gap: 10px; }
+        .hawaii-title { font-size: 55px; font-weight: 900; color: #1e73be; letter-spacing: -2px; text-shadow: 2px 2px 0px #000; margin: 0; line-height: 1; }
+        .hawaii-sub { color: #1e73be; font-size: 16px; font-weight: bold; line-height: 1.1; }
+        .id-number { font-size: 22px; font-weight: bold; margin-top: 5px; }
+        
+        .rainbow-container { position: absolute; top: 100px; left: 190px; width: 410px; height: 150px; overflow: hidden; z-index: 1; }
+        .rainbow-curve { position: absolute; width: 120%; height: 300px; border-radius: 50%; border-top: 12px solid #e32b2b; box-shadow: inset 0 12px 0 0 #f2cd2c, inset 0 24px 0 0 #60b347, inset 0 36px 0 0 #5fbcd3, inset 0 48px 0 0 #9350a1; transform: translate(-10%, 10px) rotate(-15deg); }
+        
+        .stats-container { position: relative; z-index: 10; margin-top: 25px; }
+        .dob-row { font-size: 24px; font-weight: bold; margin-bottom: 12px; }
+        
+        /* INCREASED FONT SIZES FOR READABILITY */
+        .grid-stats { 
+            display: grid; grid-template-columns: repeat(6, 1fr); 
+            text-align: center; font-size: 14px; font-weight: 800; 
+            margin-bottom: 15px; 
+        }
+        .grid-stats span { 
+            display: block; font-weight: 600; margin-top: 4px; 
+            font-size: 17px; color: #222; 
+        }
+        
+        .issue-row { 
+            display: flex; gap: 20px; font-size: 13px; font-weight: 800; 
+        }
+        .issue-row span { 
+            display: block; font-weight: 600; margin-top: 4px; 
+            font-size: 16px; color: #222; 
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+        .signature { font-family: 'Caveat', cursive; font-size: 45px; position: absolute; bottom: 20px; right: 50px; transform: rotate(-5deg); }
+
+        .back-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .hawaii-islands svg { width: 120px; height: 80px; fill: none; stroke: #000; stroke-width: 1.5px; }
+        .fake-2d-barcode { width: 350px; height: 90px; background-image: repeating-linear-gradient(90deg, #000 0px, #000 3px, transparent 3px, transparent 6px), repeating-linear-gradient(0deg, #000 0px, #000 2px, transparent 2px, transparent 5px); background-size: 12px 100%, 100% 7px; border-left: 8px solid #000; border-right: 8px solid #000; }
+        .back-bottom { display: flex; gap: 40px; margin-top: 30px; }
+        .vertical-barcode { width: 50px; height: 180px; background: repeating-linear-gradient(0deg, #000, #000 2px, #fff 2px, #fff 5px, #000 5px, #000 8px, #fff 8px, #fff 10px); }
+        .back-text-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 40px; font-size: 16px; }
+        .back-label { font-weight: bold; margin-bottom: 5px; }
+        .back-value { font-size: 14px; text-transform: uppercase; }
+    </style>
+
+    <div class="card-scene">
+        <div class="card-inner" id="card-inner">
+            <div class="card-face card-front">
+                <div class="id-front">
+                    <div class="id-left">
+                        <img class="user-photo sync-photo" src="https://via.placeholder.com/140x180/cbd5e1/cbd5e1" alt="">
+                        <div class="fake-barcode-front"></div>
+                        <div class="left-text">
+                            <span class="sync-name format-upper">McLOVIN</span><br>
+                            892 MOMONA ST<br>HONOLULU, HI 96820
+                        </div>
+                    </div>
+                    <div class="rainbow-container"><div class="rainbow-curve"></div></div>
+                    <div class="id-right">
+                        <div class="hawaii-header">
+                            <h1 class="hawaii-title">HAWAII</h1><div class="hawaii-sub">DRIVER<br>LICENSE</div>
+                        </div>
+                        <div class="id-number">NUMBER 01-47-87441</div>
+                        <div class="stats-container">
+                            <div class="dob-row">DOB <span class="sync-dob">06/03/1981</span> &nbsp;&nbsp;EXP <span class="sync-exp">06/03/2008</span></div>
+                            <div class="grid-stats">
+                                <div>HT<span class="sync-ht format-upper">5-8</span></div>
+                                <div>WT<span class="sync-wt format-upper">70</span></div>
+                                <div>HAIR<span class="sync-hair format-upper">BLACK</span></div>
+                                <div>EYES<span class="sync-eyes format-upper">BRO</span></div>
+                                <div>SEX<span class="sync-sex format-upper">M</span></div>
+                                <div>CTY<span class="sync-cty format-upper">0</span></div>
+                            </div>
+                            <div class="issue-row">
+                                <div>ISSUE DATE<span class="sync-issue">06/18/1998</span></div>
+                                <div>CLASS<span class="sync-class">3</span></div>
+                                <div>RESTR<span class="sync-restr-front format-upper"></span></div>
+                                <div>ENDORSE<span class="sync-endorse format-upper"></span></div>
+                            </div>
+                        </div>
+                        <div class="signature sync-name format-title">McLovin</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-face card-back">
+                <div class="back-top">
+                    <div class="hawaii-islands"><svg viewBox="0 0 100 60"><path d="M10,20 Q12,18 15,22 Q13,24 10,20 Z" /><path d="M25,28 Q30,25 35,30 Q32,33 25,28 Z" /><path d="M40,32 Q45,30 50,35 Q48,38 40,32 Z" /><path d="M60,40 Q75,25 85,45 Q70,60 55,45 Z" /></svg></div>
+                    <div class="fake-2d-barcode"></div>
+                </div>
+                <div class="back-bottom">
+                    <div class="vertical-barcode"></div>
+                    <div class="back-text-grid">
+                        <div><div class="back-label">12. RESTRICTIONS</div><div class="back-value sync-restr-back format-upper">CORRECTIVE LENSES</div></div>
+                        <div><div class="back-label">5a. ENDORSEMENTS</div><div class="back-value"></div></div>
+                        <div><div class="back-label">ORGAN/TISSUE DONOR</div><div class="back-value sync-donor format-upper">YES</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

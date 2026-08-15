@@ -1,0 +1,252 @@
+<!-- ========================================== -->
+<!-- 1. THE DYNAMIC FORM                        -->
+<!-- ========================================== -->
+<div class="template-specific-form">
+    <div class="input-group" style="background: #f0f0f0; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+        <label style="color: #000; margin-bottom: 5px;">Select Bikini Bottom Card Type</label>
+        <select id="sb-variant-picker" onchange="window.switchSpongeBobVariant(this.value)" style="background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+            <option value="spongebob">1. Spongebob Boating License</option>
+            <option value="sandy">2. Sandy Cheeks License</option>
+            <option value="krabs">3. Mr. Krabs License</option>
+            <option value="squidward">4. Squidward Tentacles License</option>
+            <option value="whatzit">5. Mr. What Zit Tooya License</option>
+            <option value="patrick_fake">6. Patrick Star (Fake ID)</option>
+            <option value="credit1">7. Pretend Credit Card (Pineapple Bank)</option>
+            <option value="credit2">8. Pretend Credit Card (Bikini Bottom Bank)</option>
+        </select>
+    </div>
+
+    <div class="input-group"><label>Name / Title</label><input type="text" data-sync="sb-name"></div>
+    <div class="input-group"><label>Address Line 1</label><input type="text" data-sync="sb-address"></div>
+    <div class="input-group"><label>City / Line 2</label><input type="text" data-sync="sb-city"></div>
+    
+    <div class="input-row">
+        <div class="input-group"><label>License No.</label><input type="text" data-sync="sb-lic"></div>
+        <div class="input-group"><label>Class</label><input type="text" data-sync="sb-class"></div>
+    </div>
+    <div class="input-row">
+        <div class="input-group"><label>Expires</label><input type="text" data-sync="sb-exp"></div>
+        <div class="input-group"><label>DOB</label><input type="text" data-sync="sb-dob"></div>
+    </div>
+    <div class="input-row">
+        <div class="input-group"><label>Sex</label><input type="text" data-sync="sb-sex"></div>
+        <div class="input-group"><label>Hair</label><input type="text" data-sync="sb-hair"></div>
+    </div>
+    <div class="input-row">
+        <div class="input-group"><label>Eyes</label><input type="text" data-sync="sb-eyes"></div>
+        <div class="input-group"><label>Height (HT)</label><input type="text" data-sync="sb-ht"></div>
+    </div>
+    <div class="input-group"><label>Weight (WT)</label><input type="text" data-sync="sb-wt"></div>
+    <div class="input-group" style="margin-top:20px;"><label>Upload Character Photo</label><input type="file" id="dynamic-photo-upload" accept="image/*"></div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. THE ID CARD ART CONTAINER               -->
+<!-- ========================================== -->
+<div class="template-specific-card">
+    <style>
+        /* Typography Imports: Times New Roman standard, Arial, Caveat (handwriting) */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Permanent+Marker&family=Comic+Neue:wght@700&display=swap');
+        
+        .card-scene { width: 600px; height: 380px; perspective: 1000px; }
+        .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; background: #ffffff; color: #000; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #e0e0e0; }
+        .card-back { transform: rotateY(180deg); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; background: #f4f6f8; }
+
+        /* BASE DRIVER LICENSE STYLES (Spongebob 1:1 Replica) */
+        .spongebob-card { 
+            width: 100%; height: 100%; display: flex; flex-direction: column; 
+            padding: 16px 20px; position: relative; 
+            background: #FDF7E7; /* Warm cream off-white */
+        }
+        
+        /* Top Header - Gap added for the thin parallel lines */
+        .sb-top-bars { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2px; margin-bottom: 2px; }
+        .sb-gold-bars { display: flex; flex-direction: column; gap: 4px; width: 90px; }
+        .sb-gold-bars span { height: 4px; background: #D99B32; border-radius: 1px; } /* Rich golden-amber */
+        
+        .header-standard { text-align: center; border-bottom: 2px solid #111; padding-bottom: 4px; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+        .header-standard-center { text-align: center; flex: 1; }
+        .header-standard h1 { font-family: 'Times New Roman', Georgia, serif; font-size: 38px; font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -1px; }
+        .header-standard h2 { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: bold; margin-top: 4px; letter-spacing: 1px; }
+        
+        .header-patrick-fake { display: none; text-align: center; font-family: 'Permanent Marker', cursive; }
+        
+        .sb-class-badge { font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; text-align: right; width: 90px; }
+        
+        /* Expiration & License Number */
+        .sb-exp-row { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: bold; color: #B72E2E; margin-top: 6px; } /* Deep crimson */
+        .sb-lic-row { text-align: center; font-family: 'Times New Roman', Georgia, serif; font-size: 26px; font-weight: 700; color: #2B5B3E; margin: 0; letter-spacing: 1px;} /* Dark forest green */
+        
+        /* The Squiggles - Hand-drawn double vector wave stroke */
+        .sb-squiggles-container { 
+            width: 100%; height: 20px; 
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,5 Q5,-2 10,5 T20,5 T30,5 T40,5 T50,5 T60,5 T70,5 T80,5 T90,5 T100,5" fill="none" stroke="%23111" stroke-width="1.5"/><path d="M0,15 Q5,8 10,15 T20,15 T30,15 T40,15 T50,15 T60,15 T70,15 T80,15 T90,15 T100,15" fill="none" stroke="%23111" stroke-width="1.5"/></svg>'); 
+            background-size: 40px 100%; background-repeat: repeat-x; 
+            margin-bottom: 8px; margin-top: 2px;
+        }
+        
+        /* Main Body Layout */
+        .sb-body { display: flex; gap: 20px; margin-top: 0; z-index: 5; flex: 1; }
+        
+        /* Photo Box */
+        .sb-photo-box { width: 160px; height: 195px; border: 2px solid #111; border-radius: 6px; overflow: hidden; background: #A586CA; /* Desaturated pastel purple */ flex-shrink: 0; }
+        .sb-photo { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Info Text */
+        .sb-info-box { flex: 1; display: flex; flex-direction: column; font-family: 'Times New Roman', Georgia, serif; font-weight: 700; padding-top: 0px; }
+        .sb-main-text { font-size: 20px; line-height: 1.2; letter-spacing: 0.5px; text-transform: uppercase; color: #000; }
+        
+        /* Stats Grid - Using clean Arial */
+        .sb-stats-grid { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; margin-top: 6px; font-family: Arial, Helvetica, sans-serif; font-weight: 900; letter-spacing: 0px;}
+        .sb-stats-grid div { display: flex; align-items: baseline; gap: 4px; color: #000; }
+        .sb-stats-grid span { color: #2a558c; } 
+        
+        /* Signature - Strict clean placement inside the white field */
+        .sb-signature { font-family: 'Caveat', 'Comic Neue', cursive; font-size: 38px; position: absolute; bottom: 8px; right: 25px; transform: rotate(-2deg); line-height: 1; color: #111; }
+        
+        /* The Watermark */
+        .sb-watermark { position: absolute; right: 20px; bottom: 20px; width: 220px; opacity: 0.05; z-index: 1; pointer-events: none; }
+
+        /* CREDIT CARD STYLES */
+        .credit-card { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; position: relative; border-radius: 12px; }
+        .cc-chip { width: 45px; height: 35px; background: linear-gradient(135deg, #d4af37, #aa771c); border-radius: 4px; border: 1px solid #7c5108; margin-bottom: 10px; }
+        .cc-numbers { font-family: 'Courier New', monospace; font-size: 26px; font-weight: bold; letter-spacing: 3px; color: #111; margin: 15px 0; }
+        .cc-footer { display: flex; justify-content: space-between; align-items: flex-end; font-family: 'Courier New', monospace; font-weight: bold; }
+
+        /* ========================================= */
+        /* CSS THEMES (COLOR, FONT & LAYOUT MAPPINGS)*/
+        /* ========================================= */
+        
+        /* Spongebob, Sandy default styles map to the Base layout above */
+
+        /* 1. Mr. Krabs */
+        .theme-krabs .spongebob-card { background: #f1f6ed; } /* Light greenish tint */
+        
+        /* 2. Patrick (Fake ID) */
+        .theme-patrick_fake .spongebob-card { background: #f2ebd9; }
+        .theme-patrick_fake .header-standard { display: none; }
+        .theme-patrick_fake .header-patrick-fake { display: block; }
+        .theme-patrick_fake .sb-gold-bars { visibility: hidden; }
+        .theme-patrick_fake .sb-photo-box { background: #60c4c4; border-radius: 10px; border: 3px solid #333; transform: rotate(-3deg); }
+        .theme-patrick_fake .sb-squiggles-container { display: none; }
+        .theme-patrick_fake .sb-info-box { font-family: 'Permanent Marker', cursive; font-weight: normal; font-size: 20px; }
+        .theme-patrick_fake .sb-stats-grid { display: none; } 
+        .theme-patrick_fake .sb-lic-row { font-family: 'Permanent Marker', cursive; text-decoration: underline; font-size: 26px; color: #286c4e;}
+        .theme-patrick_fake .sb-signature { font-family: 'Permanent Marker', cursive; font-size: 48px; transform: none; right: 30px; bottom: 20px;}
+
+        /* 3. Squidward */
+        .theme-squidward .sb-photo-box { background: #9cd3d3; } /* Light Teal */
+
+        /* 4. Mr. What Zit Tooya */
+        .theme-whatzit .sb-photo-box { background: #8c92ac; } /* Muted Grey-Blue */
+
+        /* 5. Credit Cards */
+        .theme-credit1 .credit-card { background: #a2e8dd; } 
+        .theme-credit2 .credit-card { background: #6fa8dc; } 
+
+        /* BACK DESIGN */
+        .sb-back-stripe { width: 100%; height: 45px; background: #111; margin-top: -5px; }
+        .sb-back-sigbox { background: #fff; border: 1px solid #ccc; height: 38px; display: flex; align-items: center; padding: 0 10px; justify-content: space-between; margin-top: 10px; }
+    </style>
+
+    <div class="card-scene">
+        <div class="card-inner" id="card-inner">
+            
+            <div class="card-face card-front">
+                <div id="bb-card-wrapper" class="theme-spongebob" style="width: 100%; height: 100%;">
+                    
+                    <!-- DRIVER LICENSE VIEW -->
+                    <div id="view-license" class="spongebob-card">
+                        <svg class="sb-watermark" viewBox="0 0 100 100"><path fill="none" stroke="#000" stroke-width="2" d="M50 10 C30 10 10 30 10 50 C10 70 30 90 50 90 C70 90 90 70 90 50 C90 30 70 10 50 10 Z M50 20 C65 20 80 35 80 50 C80 65 65 80 50 80 C35 80 20 65 20 50 C20 35 35 20 50 20 Z"/></svg>
+
+                        <div class="header-standard">
+                            <div class="sb-gold-bars"><span></span><span></span></div>
+                            <div class="header-standard-center">
+                                <h1>BIKINI BOTTOM</h1><h2>DRIVER LICENSE</h2>
+                            </div>
+                            <div class="sb-class-badge">CLASS: <span class="sync-sb-class">S</span></div>
+                        </div>
+                        
+                        <div class="header-patrick-fake">
+                            <h1>Bikini Bottom</h1><h2>Official identification</h2><h3>(This is Not a Driver's License!)</h3>
+                        </div>
+
+                        <div class="sb-exp-row">
+                            EXPIRES: <span class="sync-sb-exp">12-14-03</span>
+                        </div>
+
+                        <div class="sb-lic-row sync-sb-lic">A1356021</div>
+                        
+                        <!-- Inline SVG Double Squiggle Separator -->
+                        <div class="sb-squiggles-container"></div>
+
+                        <div class="sb-body">
+                            <div class="sb-photo-box"><img class="sb-photo sync-photo" src="https://via.placeholder.com/155x195/bfefff/333333?text=Photo" alt=""></div>
+                            
+                            <div class="sb-info-box">
+                                <div class="sb-main-text sync-sb-name">SPONGEBOB SQUAREPANTS</div>
+                                <div class="sb-main-text sync-sb-address">124 CONCH ST.</div>
+                                <div class="sb-main-text sync-sb-city">BIKINI BOTTOM</div>
+                                
+                                <div class="sb-stats-grid" style="margin-top: 10px;">
+                                    <div>SEX: <span class="sync-sb-sex">M</span></div>
+                                    <div>HAIR: <span class="sync-sb-hair">YELLOW</span></div>
+                                    <div>EYES: <span class="sync-sb-eyes">BLUE</span></div>
+                                </div>
+                                <div class="sb-stats-grid" style="margin-top: 4px;">
+                                    <div>HT: <span class="sync-sb-ht">0-04</span></div>
+                                    <div>WT: <span class="sync-sb-wt">1oz</span></div>
+                                    <div style="color: #B72E2E;">DOB: <span class="sync-sb-dob" style="color: #B72E2E;">07-14-86</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Cursive Signature fitting strictly inside the layout -->
+                        <div class="sb-signature sync-sb-name">Spongebob Squarepants</div>
+                    </div>
+
+                    <!-- CREDIT CARD VIEW -->
+                    <div id="view-credit" class="credit-card" style="display: none;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div>
+                                <div style="font-family: 'Arial Black', sans-serif; font-size: 18px;" id="cc-bank-name">PINEAPPLE BANK</div>
+                                <div style="font-size: 10px; font-weight: bold; opacity: 0.7;">BONUS BIKINI BOTTOM MEMBERSHIP CARD</div>
+                            </div>
+                        </div>
+                        <div><div class="cc-chip"></div><div class="cc-numbers sync-sb-lic">7890 6543 2101 2345</div></div>
+                        <div class="cc-footer">
+                            <div>
+                                <div style="font-size: 9px; opacity: 0.7;">GOOD THRU <span class="sync-sb-exp">12/25</span></div>
+                                <div class="sync-sb-address format-upper" style="font-size: 13px;">LITTLE SHOPPER</div>
+                            </div>
+                            <div class="sync-sb-name format-upper" style="font-size: 14px;">SPONGEBOB SQUAREPANTS</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="card-face card-back">
+                <div>
+                    <div style="font-family: 'Arial Black', sans-serif; font-size: 13px; margin-bottom: 3px;" id="sb-back-title">BOATING SCHOOL OF BIKINI BOTTOM</div>
+                    <div class="sb-back-stripe"></div>
+                    <div class="sb-back-sigbox">
+                        <div style="font-size: 9px; font-weight: bold; color: #666;" id="sb-sig-label">AUTHORIZED SIGNATURE</div>
+                        <div class="sb-signature sync-sb-name" style="position:static; transform:none; font-size:26px;">Spongebob Squarepants</div>
+                    </div>
+                </div>
+                
+                <div style="font-size: 10px; line-height: 1.35; color: #444; font-weight: bold;" id="sb-back-desc">
+                    This license is issued by Mrs. Puff's Boating School. Holder is permitted to crash boats into stationary objects indefinitely.
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div style="font-size: 9px; font-weight: bold;" id="sb-back-support">CUSTOMER SERVICE: 1-800-MRS-PUFF</div>
+                    <div style="font-family: 'Arial Black', sans-serif; font-size: 11px; color: #1e5631;" id="sb-back-dept">BIKINI BOTTOM DEPT.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

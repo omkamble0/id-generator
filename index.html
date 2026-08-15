@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Studio | Minimal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #f9f9f9; --surface: #ffffff; --text-main: #111111;
+            --text-muted: #737373; --border: 1px solid #e5e5e5;
+            --accent: #000000; --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+        /* Left Panel */
+        .left-panel { width: 38%; min-width: 380px; background: var(--surface); border-right: var(--border); display: flex; flex-direction: column; position: relative; z-index: 10; box-shadow: 4px 0 24px rgba(0,0,0,0.02); }
+        .title-block { padding: 50px 40px 30px; display: flex; flex-direction: column; }
+        .title-block h1 { font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; font-weight: 300; line-height: 1.1; letter-spacing: -1.5px; }
+        .title-block h1 span { font-weight: 600; }
+        .subtitle { margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+
+        /* Dynamic Editor Form */
+        .editor-section { display: none; flex-direction: column; flex: 1; background: var(--surface); border-top: var(--border); overflow: hidden;}
+        .editor-header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border); }
+        .editor-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 400; }
+        .btn-back { background: transparent; border: none; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .btn-back:hover { color: var(--text-main); }
+        
+        #dynamic-editor-form { padding: 40px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; height: 100%;}
+        
+        .input-group { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .input-row { display: flex; gap: 20px; }
+        label { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase;}
+        input { background: var(--bg-color); border: 1px solid transparent; padding: 14px 16px; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 6px; color: var(--text-main); transition: all 0.2s; width: 100%; }
+        input:focus { outline: none; border: 1px solid #d4d4d4; background: var(--surface); box-shadow: var(--shadow-subtle); }
+
+        /* Right Panel */
+        .right-panel { flex: 1; height: 100vh; background: var(--bg-color); position: relative; overflow-y: auto; }
+        .grid-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; padding: 60px; }
+        .grid-item { display: flex; flex-direction: column; cursor: pointer; transition: transform 0.4s; }
+        .grid-item:hover { transform: translateY(-5px); }
+        .template-art { width: 100%; height: 220px; border-radius: 12px; margin-bottom: 20px; box-shadow: var(--shadow-subtle); border: var(--border); overflow: hidden; background: #e5e5e5; }
+        .template-art img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.6s; }
+        .grid-item:hover .template-art img { transform: scale(1.05); }
+        .grid-item h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+        .grid-item p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* Workspace */
+        .workspace-section { display: none; height: 100%; width: 100%; flex-direction: column; background-image: radial-gradient(#d4d4d4 1px, transparent 1px); background-size: 24px 24px; }
+        .workspace-toolbar { padding: 20px 40px; background: transparent; display: flex; justify-content: flex-end; gap: 12px; }
+        .btn-action { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; padding: 10px 20px; cursor: pointer; border-radius: 50px; transition: 0.2s; border: none; }
+        .btn-action.flip { background: var(--surface); color: var(--text-main); border: var(--border); box-shadow: var(--shadow-subtle); }
+        .btn-action.download { background: var(--accent); color: #fff; }
+        .btn-action:hover { opacity: 0.8; transform: translateY(-1px); }
+        .canvas-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; perspective: 1200px; }
+    </style>
+</head>
+<body>
+
+    <div class="left-panel">
+        <div class="title-block">
+            <h1>ID<br>Studio <span>Pro</span></h1>
+            <div class="subtitle">Digital Identity Canvas</div>
+        </div>
+
+        <div class="editor-section" id="editor-section">
+            <div class="editor-header">
+                <h2>Configure Template</h2>
+                <button class="btn-back" onclick="showGrid()">Back to Gallery</button>
+            </div>
+            <div id="dynamic-editor-form"></div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="grid-section" id="grid-section">
+            <div class="grid-item template-card" data-template="mclovin">
+                <div class="template-art"><img src="mclovin-thumb.jpg" alt="McLovin"></div>
+                <h2>Hawaii DL</h2><p>The Classic McLovin Template</p>
+            </div>
+
+            <div class="grid-item template-card" data-template="spongebob-license">
+                <div class="template-art"><img src="spongebob-thumb.jpg" alt="Spongebob"></div>
+                <h2>Bikini Bottom</h2><p>Boating School License</p>
+            </div>
+
+            <div class="grid-item template-card" data-template="tyler">
+                <div class="template-art"><img src="tyler-thumb.jpg" alt="Tyler"></div>
+                <h2>Call Me If You Get Lost</h2><p>License of Travel</p>
+            </div>
+
+             <div class="grid-item template-card" data-template="Peter">
+                <div class="template-art"><img src="peter.jpg" alt="Peter"></div>
+                <h2>Peterrr griffin </h2><p>Scary driving license</p>
+            </div>
+           <div class="grid-item template-card" data-template="hacienda">
+    <div class="template-art"><img src="hacienda.jpg" alt="FAC51 Hacienda"></div>
+    <h2>FAC51 Hacienda</h2><p>Vintage Club Pass</p>
+</div>
+<div class="grid-item template-card" data-template="mypaint">
+    <!-- Using your front image as the thumbnail --> 
+    <div class="template-art"><img src="custom-card1.png" alt="My Own Tempo"></div>
+    <h2>My Own Tempo</h2><p>Custom MS Paint Zine</p>
+</div>
+
+        </div>
+
+        <div class="workspace-section" id="workspace-section">
+            <div class="workspace-toolbar">
+                <button class="btn-action flip" onclick="toggleFlip()">Flip Card</button>
+                <button class="btn-action download" onclick="downloadID()">Export High-Res</button>
+            </div>
+            <div class="canvas-area" id="template-container"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
